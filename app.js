@@ -11,6 +11,7 @@ app.use((req, res, next) => {
   console.log(req.method, req.path, '---')
   next()
 })
+app.use(express.static('build'))
 
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'it works'})
@@ -49,11 +50,18 @@ app.post('/api/notes', (req, res, next) => {
       date: new Date().toISOString()
     }
     notes = [ ...notes, note ]
-    res.status(201).json({ message: 'note created' })
+    res.status(201).json(note)
   } else {
     const error = new ErrorResponse(400, 'Content must be specified')
     next(error)
   }
+})
+
+app.put('/api/notes/:id', (req, res, next) => {
+  const data = req.body
+  const { id } = req.params
+  notes = notes.map(note => note.id === id ? data : note)
+  res.status(200).json(data)
 })
 
 // middlewares
