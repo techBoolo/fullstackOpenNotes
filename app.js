@@ -2,13 +2,18 @@ import express from 'express'
 import crypto from 'crypto'
 import { notesData } from './data.js' 
 import ErrorResponse from './utils/errorResponse.js'
+import notesRoute from './routes/note.js'
 
 const app = express()
 let notes = [...notesData];
 
 app.use(express.json())
 app.use((req, res, next) => {
-  console.log(req.method, req.path, '---')
+  req.requestTime = Date.now()
+  next()
+})
+app.use((req, res, next) => {
+  console.log(req.method, req.path, req.requestTime)
   next()
 })
 app.use(express.static('build'))
@@ -17,52 +22,7 @@ app.get('/', (req, res) => {
   res.status(200).json({ message: 'it works'})
 })
 
-app.get('/api/notes', (req, res) => {
-  res.status(200).json(notes)
-})
-
-app.get('/api/notes/:id', (req, res, next) => {
-  const { id } = req.params
-  const note = notes.find(note => note.id === id)
-  if(note) {
-    res.status(200).json(note)
-  } else {
-    const error = new ErrorResponse(404, 'Note not found')
-    next(error)
-  }
-})
-
-app.delete('/api/notes/:id', (req, res, next) => {
-  const { id } = req.params
-  notes = notes.filter(note => note.id !== id)
-
-  res.status(200).json({ message: 'note deleted' })
-})
-
-app.post('/api/notes', (req, res, next) => {
-  const { content, important }  = req.body 
-
-  if(content.trim()) {
-    const note = {
-      id: crypto.randomUUID(),
-      content, 
-      important: important || false,
-      date: new Date().toISOString()
-    }
-    notes = [ ...notes, note ]
-    res.status(201).json(note)
-  } else {
-    const error = new ErrorResponse(400, 'Content must be specified')
-    next(error)
-  }
-})
-
-app.put('/api/notes/:id', (req, res, next) => {
-  const data = req.body
-  const { id } = req.params
-  notes = notes.map(note => note.id === id ? data : note)
-  res.status(200).json(data)
-})
+app.use('/api/notes', notesRoute)
 
 // middlewares
 app.use((req, res, next) => {
