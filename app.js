@@ -1,11 +1,8 @@
 import express from 'express'
-import crypto from 'crypto'
-import { notesData } from './data.js' 
 import ErrorResponse from './utils/errorResponse.js'
 import notesRoute from './routes/note.js'
 
 const app = express()
-let notes = [...notesData];
 
 app.use(express.json())
 app.use((req, res, next) => {
@@ -19,7 +16,7 @@ app.use((req, res, next) => {
 app.use(express.static('build'))
 
 app.get('/', (req, res) => {
-  res.status(200).json({ message: 'it works'})
+  res.status(200).json({ message: 'it works' })
 })
 
 app.use('/api/notes', notesRoute)
@@ -33,6 +30,6 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => {
   res.statusMessage = error.message
   res.status(error.statusCode || 500)
-  res.json({ message: error.message})
+  res.json({ message: error.message })
 })
 export default app

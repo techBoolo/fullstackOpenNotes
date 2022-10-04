@@ -1,7 +1,7 @@
 import * as Note from '../models/note.js'
 import ErrorResponse from '../utils/errorResponse.js'
 
-export const index = async (req, res) => {
+export const index = async (req, res, next) => {
   try {
     const notes = await Note.getNotes()
     res.status(200).json(notes)
@@ -29,7 +29,7 @@ export const remove = async (req, res, next) => {
     const { id } = req.params
     const result = await Note.deleteNote(id)
     if(result.deletedCount > 0) {
-      res.status(200).json({ message: 'note deleted', ...result})
+      res.status(200).json({ message: 'note deleted', ...result })
     } else {
       throw new ErrorResponse(404, 'note not found')
     }
@@ -54,12 +54,12 @@ export const update = async (req, res, next) => {
 }
 
 export const create = async (req, res, next) => {
-  const { content, important }  = req.body 
+  const { content, important }  = req.body
 
   try {
     if(content.trim()) {
       const note = {
-        content, 
+        content,
         important: important || false,
         date: new Date().toISOString()
       }
