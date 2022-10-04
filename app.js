@@ -1,6 +1,7 @@
 import express from 'express'
 import ErrorResponse from './utils/errorResponse.js'
 import notesRoute from './routes/note.js'
+import logger from './utils/logger.js'
 
 const app = express()
 
@@ -10,7 +11,7 @@ app.use((req, res, next) => {
   next()
 })
 app.use((req, res, next) => {
-  console.log(req.method, req.path, req.requestTime)
+  logger.info(req.method, req.path, req.requestTime)
   next()
 })
 app.use(express.static('build'))
