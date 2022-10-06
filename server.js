@@ -1,6 +1,6 @@
 import http from 'http'
 import app from './app.js'
-import * as config from './config/config.js'
+import config from './config/config.js'
 import connectDB from './config/db.js'
 import logger from './utils/logger.js'
 
