@@ -2,6 +2,7 @@ import express from 'express'
 import * as express_async_errors from 'express-async-errors'
 import ErrorResponse from './utils/errorResponse.js'
 import notesRoute from './routes/note.js'
+import usersRoute from './routes/user.js'
 import logger from './utils/logger.js'
 
 const app = express()
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/notes', notesRoute)
+app.use('/api/users', usersRoute)
 
 // middlewares
 app.use(() => {
