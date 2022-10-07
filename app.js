@@ -1,5 +1,5 @@
 import express from 'express'
-import * as express_async_errors from 'express-async-errors'
+import 'express-async-errors'
 import ErrorResponse from './utils/errorResponse.js'
 import notesRoute from './routes/note.js'
 import usersRoute from './routes/user.js'

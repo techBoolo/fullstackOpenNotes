@@ -64,6 +64,39 @@ describe('creating a new user', () => {
   })
 })
 
+describe('login', () => {
+  test('can succeed with existing username and its correct password', async () => {
+    const userInfo = {
+      username: 'root',
+      password: 'sekret'
+    }
+    await api
+      .post('/api/users/login')
+      .send(userInfo)
+      .expect(200)
+  })
+  test('with wrong password will fail', async () => {
+    const userInfo = {
+      username: 'root',
+      password: 'wrong password'
+    }
+    await api
+      .post('/api/users/login')
+      .send(userInfo)
+      .expect(401)
+  })
+  test('failed with non existing username', async () => {
+    const userInfo = {
+      username: 'nonexistingUser',
+      password: 'password'
+    }
+    await api
+      .post('/api/users/login')
+      .send(userInfo)
+      .expect(401)
+  })
+})
+
 afterAll(async () => {
   await closeDB()
 })

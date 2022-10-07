@@ -7,4 +7,6 @@ router.route('/')
   .post(usersController.create)
   .get(usersController.index)
 
+router.post('/login', usersController.login)
+
 export default router

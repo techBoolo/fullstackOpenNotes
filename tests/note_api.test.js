@@ -5,15 +5,35 @@ import helper from './test_helper.js'
 
 const api = supertest(app)
 let Note
+let User
+let user
 
 beforeAll(async () => {
   await connectDB()
   Note = getDB().collection('notes')
+  User = getDB().collection('users')
 })
 
 beforeEach(async () => {
   await Note.deleteMany({})
+  await User.deleteMany({})
   await Note.insertMany(helper.initialNotes)
+  const newUser = {
+    username: 'new root',
+    name: 'new root',
+    password: 'password'
+  }
+  await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(201)
+
+  const result = await api
+    .post('/api/users/login')
+    .send(newUser)
+    .expect(200)
+
+  user = result.body.user
 })
 
 describe('when there is initially some notes', () => {
@@ -40,16 +60,20 @@ describe('when there is initially some notes', () => {
 
 describe('adding of a new note', () => {
   test('succeed with valid note', async () => {
+
     const newNote = {
       content: 'async/await makes async calls simple',
       important: true
     }
 
-    await api
+    const result = await api
       .post('/api/notes')
+      .set("authentication", `bearer ${user.token}`)
       .send(newNote)
       .expect(201)
       .expect('Content-Type', /application\/json/)
+
+    expect(result.body.user).toEqual(user._id)
 
     const response = await api.get('/api/notes')
     const contents = response.body.map(r => r.content)
@@ -61,10 +85,13 @@ describe('adding of a new note', () => {
   test('will fail with invalid note', async () => {
     const newNote = { important: false }
 
-    await api
+    const result = await api
       .post('/api/notes')
+      .set("authentication", `bearer ${user.token}`)
       .send(newNote)
       .expect(400)
+
+    expect(result.body).toEqual({ message: "Content must be specified" })
 
     const response = await api.get('/api/notes')
     expect(response.body).toHaveLength(helper.initialNotes.length)

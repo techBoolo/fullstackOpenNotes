@@ -9,6 +9,7 @@ const DB_NAME =  process.env.DB_NAME
 const TEST_DB_NAME =  process.env.TEST_DB_NAME
 const NODE_ENV = process.env.NODE_ENV
 const saltRounds = +process.env.saltRounds
+const JWT_KEY = process.env.JWT_KEY
 
 const config = {
   PORT,
@@ -17,7 +18,8 @@ const config = {
   DB_NAME,
   TEST_DB_NAME,
   NODE_ENV,
-  saltRounds
+  saltRounds,
+  JWT_KEY
 }
 
 export default config

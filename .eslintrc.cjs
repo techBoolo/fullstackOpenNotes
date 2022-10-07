@@ -18,5 +18,6 @@ module.exports = {
       "no-trailing-spaces": "error",
       "object-curly-spacing": ["error", "always"],
       "arrow-spacing": [ "error", { "before": true, "after": true }],
+       "no-unused-vars": ["error", { "argsIgnorePattern": "next" }]
     }
 }
